@@ -10,9 +10,16 @@ def read_from_file(file_name)
   File.open(file_name, "r") do |aFile|
     aFile.each_line do |line|
       arr << line
-    puts line
+    #puts line
   end
   end
-  puts arr.length.to_s
+  #puts arr.length.to_s
   arr
+end
+
+def add_line_to_file(str,file_name)
+  File.open(file_name, "a") do |f|
+    f <<str <<"\n"
+  end
+  puts "Saved #{str} to #{file_name}"
 end

@@ -4,17 +4,21 @@ require 'pp'
 require_relative 'io'
 
 class WebpageParser
-  attr_accessor :websites, :file_name, :list_of_hash
+  attr_accessor :websites, :file_name, :list_of_hash, :non_tracked_word_list
 
   def initialize(fn)
     @file_name = fn
     @websites = load_websites_from_file
     @list_of_hash = Array.new  #=> store hashtable
+    @non_tracked_word_list = read_non_tracked_words_to_list
   end
 
   def load_websites_from_file()
     read_from_file(@file_name)
+  end
 
+  def list_of_websites
+    websites
   end
 
  def process_website_content
@@ -81,9 +85,8 @@ class WebpageParser
       new_arr = Array.new
       arr_count=-1
       while new_arr.length <= 10 do
-        if(arr[arr_count][0].length > 3)
+        if(!(@non_tracked_word_list.include?arr[arr_count][0].downcase))
           new_arr << arr[arr_count]
-          #p  arr[arr_count]
         end
         arr_count-=1
       end
@@ -101,10 +104,20 @@ class WebpageParser
     end
   end
 
-  def remove_whitespace
+  def add_to_non_tracked_list(str)
     #
-
+    add_line_to_file(str,"non_tracked_word.txt")
+    @non_tracked_word_list = read_non_tracked_words_to_list
   end
+
+  def read_non_tracked_words_to_list
+    arr = read_from_file("non_tracked_word.txt")
+    arr.each do |e|
+      e.chomp!
+    end
+    arr
+  end
+
 
   def array_to_sorted_hash_word_count(arr)
   #
