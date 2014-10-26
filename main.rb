@@ -21,6 +21,14 @@ class Main
     @@web_parse.add_to_non_tracked_list(word)
   end
 
+  def fraud_email
+    @@web_parse.process_email_content
+
+
+    @@web_parse.list_of_email_hash.each_with_index do |h,index|
+      @@web_parse.website_keyword(10,h)
+    end
+  end
 
 
   def menu
@@ -37,7 +45,7 @@ class Main
 2 Show Top 10 keywords in the websites
 3 Add keyword you don't want to track
 4 Check if there is any email in the websites and save to file
-5  
+5 Show Top 10 keywords in the fraud emails
 6 Exit\n"
       puts "Enter a number"
       num = gets
@@ -61,7 +69,7 @@ class Main
 
         end
       when num == "5"
-        
+        self.fraud_email
       when num == "6"
     abort("See you!")
       end
@@ -72,6 +80,3 @@ end
 
 main = Main.new
 main.run_app
-
-
-menu

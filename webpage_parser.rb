@@ -4,16 +4,19 @@ require 'pp'
 require_relative 'io'
 
 class WebpageParser
-  attr_accessor :websites, :file_name, :list_of_hash, :non_tracked_word_list
+  attr_accessor :websites, :file_name, :list_of_hash, :non_tracked_word_list, :emails, :list_of_email_hash
 
   def initialize(fn)
     @file_name = fn
     @websites = load_websites_from_file
     @list_of_hash = Array.new  #=> store hashtable
+    @list_of_email_hash = Array.new
     @non_tracked_word_list = read_non_tracked_words_to_list
+    @emails = load_email_from_file
   end
 
-  def load_websites_from_file()
+  def load_websites_from_file
+    p read_from_file(@file_name)
     read_from_file(@file_name)
   end
 
@@ -42,6 +45,36 @@ class WebpageParser
       save_to_file(h,"#{index}_hash.txt")
     end
 
+  end
+  def load_email_from_file
+    arr = read_from_file("email_filenames.txt")
+    arr.each do |e|
+      e.chomp!
+    end
+    arr
+  end
+
+  def process_email_content
+    @emails.each_with_index do |email_fn,index|
+      arr = read_from_file(email_fn)
+      puts arr.length
+
+      text_a = Array.new
+      arr.each do |e|
+
+         text_a << e.gsub!(/[\s]+/, " ").split(" ")
+        
+      end     
+      text_a.flatten!  
+
+      # remove symbol at the beginning and end of the word
+      text_a.each do |t|
+        t.gsub!(/^\W|\W$/,"")
+      end
+      
+      h = array_to_sorted_hash_word_count(text_a)
+      @list_of_email_hash << h
+    end
   end
 
   def get_email_address_from_hash_table(h)
